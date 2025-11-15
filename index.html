@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>顺风车订单成本与盈利计算器</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        :root {
+            --primary: #3498db;
+            --primary-dark: #2980b9;
+            --secondary: #2c3e50;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --light: #f5f7fa;
+            --dark: #34495e;
+            --gray: #7f8c8d;
+            --white: #ffffff;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            --radius: 12px;
+            --transition: all 0.3s ease;
+        }
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, var(--primary), var(--success));
+        }
+        h1 {
+            color: var(--secondary);
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 28px;
+            font-weight: 700;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 3px;
+        }
+        .subtitle {
+            text-align: center;
+            color: var(--gray);
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        .form-section {
+            margin-bottom: 30px;
+            background: var(--light);
+            border-radius: var(--radius);
+            padding: 20px;
+        }
+        .section-title {
+            font-size: 18px;
+            color: var(--primary);
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(52, 152, 219, 0.2);
+            display: flex;
+            align-items: center;
+        }
+        .section-title i {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+        }
+        label i {
+            margin-right: 8px;
+            color: var(--primary);
+            font-size: 16px;
+        }
+        input, select {
+            width: 100%;
+            padding: 14px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: var(--transition);
+            background: var(--white);
+        }
+        input:focus, select:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        .row {
+            display: flex;
+            gap: 15px;
+        }
+        .row .input-group {
+            flex: 1;
+        }
+        .result-section {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: var(--radius);
+            padding: 25px;
+            margin-top: 20px;
+            color: var(--white);
+        }
+        .result-section .section-title {
+            color: var(--white);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.3);
+        }
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        .result-label {
+            font-weight: 500;
+        }
+        .result-value {
+            font-weight: 600;
+        }
+        .positive {
+            color: #2ecc71;
+        }
+        .negative {
+            color: #e74c3c;
+        }
+        .highlight {
+            font-size: 20px;
+            font-weight: 700;
+            padding: 10px 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+        }
+        .scenarios {
+            margin-top: 25px;
+            background-color: var(--light);
+            border-radius: var(--radius);
+            padding: 20px;
+        }
+        .scenario-item {
+            margin-bottom: 15px;
+            padding: 12px;
+            background-color: var(--white);
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+            transition: var(--transition);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        .scenario-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 20px;
+            box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn i {
+            margin-right: 10px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(52, 152, 219, 0.4);
+        }
+        .note {
+            font-size: 14px;
+            color: var(--gray);
+            margin-top: 25px;
+            padding: 15px;
+            background-color: var(--light);
+            border-radius: var(--radius);
+            border-left: 4px solid var(--warning);
+        }
+        .auto-calc-info {
+            font-size: 14px;
+            color: var(--gray);
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+        }
+        .auto-calc-info i {
+            margin-right: 5px;
+        }
+        .toll-fee-container {
+            position: relative;
+        }
+        .auto-calc-btn {
+            position: absolute;
+            right: 0;
+            top: 0;
+            background: var(--warning);
+            color: var(--white);
+            border: none;
+            border-radius: 0 8px 8px 0;
+            padding: 14px 15px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+        }
+        .auto-calc-btn i {
+            margin-right: 5px;
+        }
+        .auto-calc-btn:hover {
+            background: #e67e22;
+        }
+        .profit-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .profit-indicator i {
+            margin-right: 5px;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 24px;
+            }
+            .row {
+                flex-direction: column;
+                gap: 0;
+            }
+            .input-group {
+                margin-bottom: 15px;
+            }
+            .btn {
+                padding: 14px;
+                font-size: 16px;
+            }
+            .result-section {
+                padding: 20px;
+            }
+            .highlight {
+                font-size: 18px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 15px;
+            }
+            h1 {
+                font-size: 22px;
+            }
+            .form-section {
+                padding: 15px;
+            }
+            input, select {
+                padding: 12px;
+            }
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        /* 卡片样式 */
+        .card {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: var(--transition);
+        }
+        
+        .card:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 标签样式 */
+        .tag {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        
+        .tag-success {
+            background: rgba(39, 174, 96, 0.1);
+            color: var(--success);
+        }
+        
+        .tag-danger {
+            background: rgba(231, 76, 60, 0.1);
+            color: var(--danger);
+        }
+        
+        /* 加载动画 */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-car-side"></i> 顺风车订单成本与盈利计算器</h1>
+        <p class="subtitle">输入您的车辆信息和订单详情，计算订单是否盈利</p>
+        
+        <div class="form-section fade-in">
+            <div class="section-title"><i class="fas fa-car"></i> 车辆信息</div>
+            <div class="row">
+                <div class="input-group">
+                    <label for="fuelType"><i class="fas fa-gas-pump"></i> 汽油类型</label>
+                    <select id="fuelType">
+                        <option value="92">92号汽油</option>
+                        <option value="95">95号汽油</option>
+                        <option value="98">98号汽油</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="fuelPrice"><i class="fas fa-dollar-sign"></i> 油价 (元/升)</label>
+                    <input type="number" id="fuelPrice" value="6.9" step="0.01">
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-group">
+                    <label for="cityConsumption"><i class="fas fa-city"></i> 市区油耗 (升/100km)</label>
+                    <input type="number" id="cityConsumption" value="13" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label for="highwayConsumption"><i class="fas fa-road"></i> 高速油耗 (升/100km)</label>
+                    <input type="number" id="highwayConsumption" value="7" step="0.1">
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-section fade-in">
+            <div class="section-title"><i class="fas fa-route"></i> 订单详情</div>
+            <div class="row">
+                <div class="input-group">
+                    <label for="pickupDistance"><i class="fas fa-map-marker-alt"></i> 接客距离 (km)</label>
+                    <input type="number" id="pickupDistance" value="52" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label for="totalDistance"><i class="fas fa-flag-checkered"></i> 总行程距离 (km)</label>
+                    <input type="number" id="totalDistance" value="720" step="0.1">
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-group toll-fee-container">
+                    <label for="tollFee"><i class="fas fa-toll"></i> 高速费 (元)</label>
+                    <input type="number" id="tollFee" value="324" step="1">
+                    <button class="auto-calc-btn" id="autoCalcTollBtn"><i class="fas fa-calculator"></i> 自动计算</button>
+                    <p class="auto-calc-info"><i class="fas fa-info-circle"></i> 根据总行程距离自动计算 (0.45元/公里)</p>
+                </div>
+                <div class="input-group">
+                    <label for="fareIncome"><i class="fas fa-money-bill-wave"></i> 路费收入 (元)</label>
+                    <input type="number" id="fareIncome" value="900" step="1">
+                </div>
+            </div>
+        </div>
+        
+        <button class="btn" id="calculateBtn"><i class="fas fa-calculator"></i> 计算订单盈利情况</button>
+        
+        <div class="result-section fade-in">
+            <div class="section-title"><i class="fas fa-chart-line"></i> 计算结果</div>
+            <div id="results">
+                <div class="result-item">
+                    <span class="result-label">接客段油耗成本:</span>
+                    <span class="result-value" id="pickupCost">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">主行程油耗成本:</span>
+                    <span class="result-value" id="mainTripCost">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">总油耗成本:</span>
+                    <span class="result-value" id="totalFuelCost">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">高速费成本:</span>
+                    <span class="result-value" id="tollCost">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">总成本:</span>
+                    <span class="result-value" id="totalCost">-</span>
+                </div>
+                <div class="result-item highlight">
+                    <span class="result-label">订单盈利:</span>
+                    <span class="result-value" id="profit">-</span>
+                </div>
+                <div class="profit-indicator" id="profitIndicator">
+                    <!-- 盈利指示器将通过JavaScript动态生成 -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="scenarios fade-in">
+            <div class="section-title"><i class="fas fa-percentage"></i> 不同高速费分摊方案</div>
+            <div id="scenarioResults">
+                <!-- 不同方案的结果将通过JavaScript动态生成 -->
+            </div>
+        </div>
+        
+        <div class="note">
+            <p><strong><i class="fas fa-lightbulb"></i> 温馨提示：</strong>此计算结果仅供参考，实际盈利可能因路况、油价波动、车辆状况等因素有所不同。建议在接单前与乘客明确高速费分摊方式。</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('calculateBtn').addEventListener('click', function() {
+            // 显示加载状态
+            const originalText = this.innerHTML;
+            this.innerHTML = '<span class="loading"></span>计算中...';
+            this.disabled = true;
+            
+            // 模拟计算延迟
+            setTimeout(() => {
+                calculateProfit();
+                this.innerHTML = originalText;
+                this.disabled = false;
+            }, 500);
+        });
+        
+        document.getElementById('autoCalcTollBtn').addEventListener('click', function() {
+            autoCalculateTollFee();
+        });
+        
+        // 当总行程距离改变时，自动更新高速费
+        document.getElementById('totalDistance').addEventListener('input', function() {
+            // 如果用户没有手动修改过高速费，则自动更新
+            if (!document.getElementById('tollFee').hasAttribute('data-manual')) {
+                autoCalculateTollFee();
+            }
+        });
+        
+        // 当高速费输入框获得焦点时，标记为手动输入
+        document.getElementById('tollFee').addEventListener('focus', function() {
+            this.setAttribute('data-manual', 'true');
+        });
+        
+        function autoCalculateTollFee() {
+            const totalDistance = parseFloat(document.getElementById('totalDistance').value);
+            const tollFeeRate = 0.45;
+            const tollFee = totalDistance * tollFeeRate;
+            document.getElementById('tollFee').value = tollFee.toFixed(2);
+            // 移除手动输入标记
+            document.getElementById('tollFee').removeAttribute('data-manual');
+        }
+        
+        function calculateProfit() {
+            // 获取输入值
+            const fuelPrice = parseFloat(document.getElementById('fuelPrice').value);
+            const cityConsumption = parseFloat(document.getElementById('cityConsumption').value);
+            const highwayConsumption = parseFloat(document.getElementById('highwayConsumption').value);
+            const pickupDistance = parseFloat(document.getElementById('pickupDistance').value);
+            const totalDistance = parseFloat(document.getElementById('totalDistance').value);
+            const tollFee = parseFloat(document.getElementById('tollFee').value);
+            const fareIncome = parseFloat(document.getElementById('fareIncome').value);
+            
+            // 计算主行程距离
+            const mainTripDistance = totalDistance - pickupDistance;
+            
+            // 计算油耗成本
+            const pickupFuelCost = (cityConsumption / 100) * pickupDistance * fuelPrice;
+            const mainTripFuelCost = (highwayConsumption / 100) * mainTripDistance * fuelPrice;
+            const totalFuelCost = pickupFuelCost + mainTripFuelCost;
+            
+            // 计算总成本（假设车主承担全部高速费）
+            const totalCost = totalFuelCost + tollFee;
+            
+            // 计算盈利
+            const profit = fareIncome - totalCost;
+            
+            // 更新结果
+            document.getElementById('pickupCost').textContent = `¥${pickupFuelCost.toFixed(2)}`;
+            document.getElementById('mainTripCost').textContent = `¥${mainTripFuelCost.toFixed(2)}`;
+            document.getElementById('totalFuelCost').textContent = `¥${totalFuelCost.toFixed(2)}`;
+            document.getElementById('tollCost').textContent = `¥${tollFee.toFixed(2)}`;
+            document.getElementById('totalCost').textContent = `¥${totalCost.toFixed(2)}`;
+            
+            const profitElement = document.getElementById('profit');
+            profitElement.textContent = `¥${profit.toFixed(2)}`;
+            profitElement.className = profit >= 0 ? 'result-value positive' : 'result-value negative';
+            
+            // 更新盈利指示器
+            const profitIndicator = document.getElementById('profitIndicator');
+            if (profit >= 0) {
+                profitIndicator.innerHTML = `<i class="fas fa-thumbs-up" style="color: #2ecc71;"></i> 此订单可以接，预计盈利 ¥${profit.toFixed(2)}`;
+                profitIndicator.style.color = '#2ecc71';
+            } else {
+                profitIndicator.innerHTML = `<i class="fas fa-thumbs-down" style="color: #e74c3c;"></i> 此订单可能亏损 ¥${Math.abs(profit).toFixed(2)}，建议谨慎考虑`;
+                profitIndicator.style.color = '#e74c3c';
+            }
+            
+            // 生成不同高速费分摊方案的结果
+            const scenarioResults = document.getElementById('scenarioResults');
+            scenarioResults.innerHTML = '';
+            
+            const scenarios = [
+                { name: '车主承担全部高速费', tollShare: 1 },
+                { name: '乘客承担全部高速费', tollShare: 0 },
+                { name: '平均分摊高速费', tollShare: 0.5 },
+                { name: '车主承担30%，乘客承担70%', tollShare: 0.3 },
+                { name: '车主承担70%，乘客承担30%', tollShare: 0.7 }
+            ];
+            
+            scenarios.forEach(scenario => {
+                const scenarioCost = totalFuelCost + (tollFee * scenario.tollShare);
+                const scenarioProfit = fareIncome - scenarioCost;
+                
+                const scenarioElement = document.createElement('div');
+                scenarioElement.className = 'scenario-item';
+                
+                const tag = scenarioProfit >= 0 ? 
+                    `<span class="tag tag-success">盈利</span>` : 
+                    `<span class="tag tag-danger">亏损</span>`;
+                
+                scenarioElement.innerHTML = `
+                    <div class="result-item">
+                        <span class="result-label">${scenario.name} ${tag}</span>
+                        <span class="result-value ${scenarioProfit >= 0 ? 'positive' : 'negative'}">¥${scenarioProfit.toFixed(2)}</span>
+                    </div>
+                `;
+                
+                scenarioResults.appendChild(scenarioElement);
+            });
+        }
+        
+        // 页面加载时自动计算
+        window.addEventListener('load', function() {
+            // 添加动画延迟
+            document.querySelectorAll('.fade-in').forEach((el, index) => {
+                el.style.animationDelay = `${index * 0.1}s`;
+            });
+            
+            // 延迟计算以展示动画效果
+            setTimeout(() => {
+                calculateProfit();
+            }, 500);
+        });
+    </script>
+</body>
+</html>
