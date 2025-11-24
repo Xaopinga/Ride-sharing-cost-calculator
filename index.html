@@ -277,25 +277,51 @@
         
         /* 响应式设计 */
         @media (max-width: 768px) {
+            body {
+                padding: 12px;
+                padding-bottom: 96px;
+            }
             .container {
-                padding: 20px;
+                padding: 16px;
+                border-radius: 0;
+                box-shadow: none;
             }
             h1 {
-                font-size: 24px;
+                font-size: 22px;
+                margin-bottom: 10px;
+            }
+            .subtitle {
+                font-size: 14px;
+                margin-bottom: 20px;
             }
             .row {
                 flex-direction: column;
                 gap: 0;
             }
             .input-group {
-                margin-bottom: 15px;
+                margin-bottom: 12px;
+            }
+            .form-section {
+                padding: 16px;
             }
             .btn {
                 padding: 14px;
                 font-size: 16px;
             }
+            #calculateBtn {
+                position: fixed;
+                left: 50%;
+                transform: translateX(-50%);
+                bottom: 16px;
+                width: calc(100% - 32px);
+                max-width: 480px;
+                border-radius: 999px;
+                margin: 0;
+                box-shadow: 0 10px 24px rgba(52, 152, 219, 0.55);
+                z-index: 100;
+            }
             .result-section {
-                padding: 20px;
+                padding: 18px;
             }
             .highlight {
                 font-size: 18px;
@@ -304,19 +330,24 @@
         
         @media (max-width: 480px) {
             body {
-                padding: 10px;
+                padding: 8px;
+                padding-bottom: 96px;
             }
             .container {
-                padding: 15px;
+                padding: 12px;
             }
             h1 {
-                font-size: 22px;
+                font-size: 20px;
             }
             .form-section {
-                padding: 15px;
+                padding: 12px;
             }
             input, select {
                 padding: 12px;
+                font-size: 15px;
+            }
+            .section-title {
+                font-size: 16px;
             }
         }
         
@@ -342,6 +373,74 @@
         
         .card:hover {
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .quick-input-title {
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+        .quick-input-title i {
+            margin-right: 8px;
+            color: var(--primary);
+        }
+        .quick-input-subtitle {
+            font-size: 13px;
+            color: var(--gray);
+            margin-bottom: 12px;
+        }
+        .advanced-toggle {
+            width: 100%;
+            margin: 10px 0 15px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px dashed rgba(52, 152, 219, 0.4);
+            background: rgba(52, 152, 219, 0.04);
+            color: var(--secondary);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+        .advanced-toggle i {
+            margin-right: 8px;
+            color: var(--primary);
+        }
+        .advanced-toggle-arrow {
+            font-size: 13px;
+            color: var(--gray);
+        }
+        .advanced-content {
+            margin-bottom: 10px;
+        }
+        .advanced-collapsed {
+            display: none;
+        }
+        .last-order {
+            font-size: 13px;
+            color: var(--gray);
+            margin-top: 8px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+        }
+        .last-order strong {
+            margin-right: 4px;
+        }
+        .last-order-btn {
+            border: none;
+            background: rgba(52, 152, 219, 0.12);
+            color: var(--primary-dark);
+            border-radius: 999px;
+            padding: 4px 10px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .last-order-btn:hover {
+            background: rgba(52, 152, 219, 0.22);
         }
         
         /* 标签样式 */
@@ -379,64 +478,170 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-    </style>
-</head>
-<body>
-    <div class="container">
+
+        /* 图表区域样式 */
+        .chart-section {
+            margin-top: 20px;
+            background-color: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .chart-section .section-title {
+            color: #ffffff;
+            border-bottom-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .chart-container {
+            margin-top: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .bar-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .bar-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .bar-label {
+            min-width: 90px;
+            color: #ecf0f1;
+        }
+
+        .bar-track {
+            flex: 1;
+            height: 14px;
+            border-radius: 7px;
+            background-color: rgba(255, 255, 255, 0.15);
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 7px;
+            background: linear-gradient(90deg, #2ecc71, #27ae60);
+            transition: width 0.4s ease;
+        }
+
+        .bar-fill.negative {
+            background: linear-gradient(90deg, #e74c3c, #c0392b);
+        }
+
+        .bar-value {
+            min-width: 70px;
+            text-align: right;
+            color: #ecf0f1;
+            font-variant-numeric: tabular-nums;
+        }
+
+        @media (max-width: 768px) {
+            .bar-label {
+                min-width: 70px;
+                font-size: 12px;
+            }
+            .bar-value {
+                min-width: 60px;
+            }
+
+            @media (max-width: 768px) {
+                .bar-label {
+                    min-width: 70px;
+                    font-size: 12px;
+                }
+                .bar-value {
+                    min-width: 60px;
+                    font-size: 12px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
         <h1><i class="fas fa-car-side"></i> 顺风车订单成本与盈利计算器</h1>
         <p class="subtitle">输入您的车辆信息和订单详情，计算订单是否盈利</p>
         
-        <div class="form-section fade-in">
-            <div class="section-title"><i class="fas fa-car"></i> 车辆信息</div>
-            <div class="row">
-                <div class="input-group">
-                    <label for="fuelType"><i class="fas fa-gas-pump"></i> 汽油类型</label>
-                    <select id="fuelType">
-                        <option value="92">92号汽油</option>
-                        <option value="95">95号汽油</option>
-                        <option value="98">98号汽油</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label for="fuelPrice"><i class="fas fa-dollar-sign"></i> 油价 (元/升)</label>
-                    <input type="number" id="fuelPrice" value="6.9" step="0.01">
-                </div>
+        <div class="card fade-in" id="quickCard">
+            <div class="quick-input-title"><i class="fas fa-bolt"></i> PK 快速输入</div>
+            <p class="quick-input-subtitle">按 APP 页面顺序依次填写：距起点 → 全程 → 预估收入，如有需要可在下方输入或调整高速费</p>
+            <div class="input-group">
+                <label for="pickupDistance"><i class="fas fa-map-marker-alt"></i> 距起点 (km)</label>
+                <input type="number" id="pickupDistance" value="52" step="0.1">
             </div>
-            <div class="row">
-                <div class="input-group">
-                    <label for="cityConsumption"><i class="fas fa-city"></i> 市区油耗 (升/100km)</label>
-                    <input type="number" id="cityConsumption" value="13" step="0.1">
-                </div>
-                <div class="input-group">
-                    <label for="highwayConsumption"><i class="fas fa-road"></i> 高速油耗 (升/100km)</label>
-                    <input type="number" id="highwayConsumption" value="7" step="0.1">
-                </div>
+            <div class="input-group">
+                <label for="totalDistance"><i class="fas fa-flag-checkered"></i> 全程 (km)</label>
+                <input type="number" id="totalDistance" value="720" step="0.1">
+            </div>
+            <div class="input-group">
+                <label for="fareIncome"><i class="fas fa-yen-sign"></i> 预估收入 (元)</label>
+                <input type="number" id="fareIncome" value="900" step="1">
+            </div>
+            <div class="input-group toll-fee-container">
+                <label for="tollFee"><i class="fas fa-toll"></i> 高速费 (元)</label>
+                <input type="number" id="tollFee" value="324" step="1">
+                <button class="auto-calc-btn" id="autoCalcTollBtn"><i class="fas fa-calculator"></i> 自动计算</button>
+                <p class="auto-calc-info"><i class="fas fa-info-circle"></i> 根据总行程距离自动计算 (0.45元/公里)，如有出入可手动修改。</p>
+            </div>
+            <div class="input-group">
+                <label><i class="fas fa-camera"></i> 截图识别填入</label>
+                <button type="button" class="last-order-btn" id="recognizeFromImageBtn">选择截图并识别</button>
+                <input type="file" id="screenshotInput" accept="image/*" style="display:none">
+            </div>
+            <p class="auto-calc-info"><i class="fas fa-info-circle"></i> 从 PK 页面截图中自动识别距起点、全程和收入三个数字。</p>
+            <div class="last-order" id="lastOrderInfo" style="display: none;">
+                <strong>上一次订单：</strong>
+                距起点 <span id="lastPickup"></span> km，
+                全程 <span id="lastTotal"></span> km，
+                收入 <span id="lastIncome"></span> 元
+                <button type="button" class="last-order-btn" id="applyLastOrderBtn">一键套用</button>
             </div>
         </div>
-        
-        <div class="form-section fade-in">
-            <div class="section-title"><i class="fas fa-route"></i> 订单详情</div>
-            <div class="row">
-                <div class="input-group">
-                    <label for="pickupDistance"><i class="fas fa-map-marker-alt"></i> 接客距离 (km)</label>
-                    <input type="number" id="pickupDistance" value="52" step="0.1">
+
+        <button type="button" class="advanced-toggle" id="advancedToggle">
+            <span><i class="fas fa-sliders-h"></i> 高级设置（车辆油耗 / 油价 / 高速费 等）</span>
+            <span class="advanced-toggle-arrow" id="advancedToggleArrow">展开</span>
+        </button>
+
+        <div id="advancedContent" class="advanced-content advanced-collapsed fade-in">
+            <div class="form-section">
+                <div class="section-title"><i class="fas fa-car"></i> 车辆信息</div>
+                <div class="row">
+                    <div class="input-group">
+                        <label for="fuelType"><i class="fas fa-gas-pump"></i> 汽油类型</label>
+                        <select id="fuelType">
+                            <option value="92">92号汽油</option>
+                            <option value="95">95号汽油</option>
+                            <option value="98">98号汽油</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="fuelPrice"><i class="fas fa-dollar-sign"></i> 油价 (元/升)</label>
+                        <input type="number" id="fuelPrice" value="6.9" step="0.01">
+                    </div>
                 </div>
-                <div class="input-group">
-                    <label for="totalDistance"><i class="fas fa-flag-checkered"></i> 总行程距离 (km)</label>
-                    <input type="number" id="totalDistance" value="720" step="0.1">
+                <div class="row">
+                    <div class="input-group">
+                        <label for="cityConsumption"><i class="fas fa-city"></i> 市区油耗 (升/100km)</label>
+                        <input type="number" id="cityConsumption" value="13" step="0.1">
+                    </div>
+                    <div class="input-group">
+                        <label for="highwayConsumption"><i class="fas fa-road"></i> 高速油耗 (升/100km)</label>
+                        <input type="number" id="highwayConsumption" value="7" step="0.1">
+                    </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="input-group toll-fee-container">
-                    <label for="tollFee"><i class="fas fa-toll"></i> 高速费 (元)</label>
-                    <input type="number" id="tollFee" value="324" step="1">
-                    <button class="auto-calc-btn" id="autoCalcTollBtn"><i class="fas fa-calculator"></i> 自动计算</button>
-                    <p class="auto-calc-info"><i class="fas fa-info-circle"></i> 根据总行程距离自动计算 (0.45元/公里)</p>
-                </div>
-                <div class="input-group">
-                    <label for="fareIncome"><i class="fas fa-money-bill-wave"></i> 路费收入 (元)</label>
-                    <input type="number" id="fareIncome" value="900" step="1">
-                </div>
+
+            <div class="form-section">
+                <div class="section-title"><i class="fas fa-route"></i> 订单详情（高级）</div>
+                <p class="auto-calc-info"><i class="fas fa-info-circle"></i> 距起点、全程、收入和高速费已在上方“PK 快速输入”中集中填写，如需更复杂的费用拆分可在未来版本中扩展。</p>
             </div>
         </div>
         
@@ -465,6 +670,18 @@
                     <span class="result-label">总成本:</span>
                     <span class="result-value" id="totalCost">-</span>
                 </div>
+                <div class="result-item">
+                    <span class="result-label">单公里收入:</span>
+                    <span class="result-value" id="perKmIncome">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">单公里成本:</span>
+                    <span class="result-value" id="perKmCost">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">单公里利润:</span>
+                    <span class="result-value" id="perKmProfit">-</span>
+                </div>
                 <div class="result-item highlight">
                     <span class="result-label">订单盈利:</span>
                     <span class="result-value" id="profit">-</span>
@@ -472,6 +689,22 @@
                 <div class="profit-indicator" id="profitIndicator">
                     <!-- 盈利指示器将通过JavaScript动态生成 -->
                 </div>
+            </div>
+        </div>
+
+        <div class="chart-section fade-in">
+            <div class="section-title"><i class="fas fa-chart-bar"></i> 成本与盈利图表</div>
+            <div class="chart-container">
+                <h4 style="margin-bottom: 8px; font-size: 14px;">订单成本构成与盈利</h4>
+                <div id="costChart" class="bar-chart"></div>
+            </div>
+            <div class="chart-container" style="margin-top: 12px;">
+                <h4 style="margin-bottom: 8px; font-size: 14px;">不同高速费分摊方案下的盈利</h4>
+                <div id="scenarioChart" class="bar-chart"></div>
+            </div>
+            <div class="chart-container" style="margin-top: 12px;">
+                <h4 style="margin-bottom: 8px; font-size: 14px;">单公里指标（¥/km）</h4>
+                <div id="perKmChart" class="bar-chart"></div>
             </div>
         </div>
         
@@ -487,7 +720,201 @@
         </div>
     </div>
 
+    <script src="https://unpkg.com/tesseract.js@2.1.0/dist/tesseract.min.js"></script>
     <script>
+        const SETTINGS_KEY = 'rideshare_calc_settings_v1';
+        const LAST_ORDER_KEY = 'rideshare_last_order_v1';
+
+        function loadSettings() {
+            try {
+                const raw = localStorage.getItem(SETTINGS_KEY);
+                if (!raw) return;
+                const data = JSON.parse(raw);
+                if (data.fuelType !== undefined) {
+                    document.getElementById('fuelType').value = data.fuelType;
+                }
+                if (data.fuelPrice !== undefined) {
+                    document.getElementById('fuelPrice').value = data.fuelPrice;
+                }
+                if (data.cityConsumption !== undefined) {
+                    document.getElementById('cityConsumption').value = data.cityConsumption;
+                }
+                if (data.highwayConsumption !== undefined) {
+                    document.getElementById('highwayConsumption').value = data.highwayConsumption;
+                }
+                if (data.pickupDistance !== undefined) {
+                    document.getElementById('pickupDistance').value = data.pickupDistance;
+                }
+            } catch (e) {}
+        }
+
+        function recognizeFromImage(file) {
+            if (!window.Tesseract) {
+                alert('识别引擎加载中，请稍后重试。');
+                return;
+            }
+            const btn = document.getElementById('recognizeFromImageBtn');
+            const input = document.getElementById('screenshotInput');
+            if (!btn || !input) return;
+
+            const originalText = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = '识别中...';
+
+            Tesseract.recognize(file, 'chi_sim+eng')
+                .then(({ data: { text } }) => {
+                    fillFromRecognizedText(text || '');
+                })
+                .catch(() => {
+                    alert('识别失败，请确保截图清晰后重试。');
+                })
+                .finally(() => {
+                    btn.disabled = false;
+                    btn.textContent = originalText;
+                    input.value = '';
+                });
+        }
+
+        function fillFromRecognizedText(text) {
+            if (!text) {
+                alert('未能从截图中识别出有效文字，请手动输入。');
+                return;
+            }
+            console.log('[OCR raw text]', text);
+
+            const normalized = text.replace(/\s+/g, '');
+
+            const pickupInput = document.getElementById('pickupDistance');
+            const totalInput = document.getElementById('totalDistance');
+            const incomeInput = document.getElementById('fareIncome');
+
+            let pickupValue = null;
+            let totalValue = null;
+            let incomeValue = null;
+
+            // 1. 关键字直匹配
+            const pickupMatch = normalized.match(/距起[点店]?(\d+(?:\.\d+)?)/);
+            const totalMatch = normalized.match(/全程(\d+(?:\.\d+)?)/);
+            const incomeMatch = normalized.match(/(收|收入|预估?收入|预估?路费)[^0-9]{0,3}(\d+(?:\.\d+)?)/);
+
+            if (pickupMatch) pickupValue = pickupMatch[1];
+            if (totalMatch) totalValue = totalMatch[1];
+            if (incomeMatch) incomeValue = incomeMatch[2] || incomeMatch[1];
+
+            // 2. 若完全没有识别到任何一个值，遍历所有数字并根据上下文模糊判断
+            if (!pickupValue && !totalValue && !incomeValue) {
+                const numRegex = /(\d+(?:\.\d+)?)/g;
+                let match;
+                const candidates = [];
+                while ((match = numRegex.exec(normalized)) !== null) {
+                    const value = match[1];
+                    const start = match.index;
+                    const end = start + match[0].length;
+                    const before = normalized.slice(Math.max(0, start - 8), start);
+                    const after = normalized.slice(end, end + 8);
+                    const context = before + '|' + after;
+                    candidates.push({ value, context });
+                }
+
+                candidates.forEach(c => {
+                    const ctx = c.context;
+                    if (!pickupValue && /距.*起.*点|距起[点店]/.test(ctx)) {
+                        pickupValue = c.value;
+                        return;
+                    }
+                    if (!totalValue && /全程|总路程|总里程/.test(ctx)) {
+                        totalValue = c.value;
+                        return;
+                    }
+                    if (!incomeValue && /(收|收入|路费|¥|￥|元)/.test(ctx)) {
+                        incomeValue = c.value;
+                        return;
+                    }
+                });
+
+                // 3. 仍未匹配到时，按照出现顺序兜底：第一个距起点，第二个全程，第三个收入
+                if (candidates.length >= 1 && !pickupValue) {
+                    pickupValue = candidates[0].value;
+                }
+                if (candidates.length >= 2 && !totalValue) {
+                    totalValue = candidates[1].value;
+                }
+                if (candidates.length >= 3 && !incomeValue) {
+                    incomeValue = candidates[2].value;
+                }
+            }
+
+            if (pickupValue && pickupInput) {
+                pickupInput.value = pickupValue;
+            }
+            if (totalValue && totalInput) {
+                totalInput.value = totalValue;
+            }
+            if (incomeValue && incomeInput) {
+                incomeInput.value = incomeValue;
+            }
+
+            if (pickupValue || totalValue || incomeValue) {
+                const tollFeeInput = document.getElementById('tollFee');
+                if (tollFeeInput && !tollFeeInput.hasAttribute('data-manual')) {
+                    autoCalculateTollFee();
+                }
+                calculateProfit();
+            } else {
+                alert('未能从截图中识别出距起点、全程和收入，请手动输入。');
+            }
+        }
+
+        function saveSettings() {
+            try {
+                const data = {
+                    fuelType: document.getElementById('fuelType').value,
+                    fuelPrice: document.getElementById('fuelPrice').value,
+                    cityConsumption: document.getElementById('cityConsumption').value,
+                    highwayConsumption: document.getElementById('highwayConsumption').value,
+                    pickupDistance: document.getElementById('pickupDistance').value
+                };
+                localStorage.setItem(SETTINGS_KEY, JSON.stringify(data));
+            } catch (e) {}
+        }
+
+        function saveLastOrder(pickupDistance, totalDistance, fareIncome) {
+            try {
+                const data = { pickupDistance, totalDistance, fareIncome };
+                localStorage.setItem(LAST_ORDER_KEY, JSON.stringify(data));
+            } catch (e) {}
+        }
+
+        function loadLastOrder() {
+            const info = document.getElementById('lastOrderInfo');
+            if (!info) return;
+            try {
+                const raw = localStorage.getItem(LAST_ORDER_KEY);
+                if (!raw) return;
+                const data = JSON.parse(raw);
+                if (data.pickupDistance == null || data.totalDistance == null || data.fareIncome == null) return;
+
+                document.getElementById('lastPickup').textContent = data.pickupDistance;
+                document.getElementById('lastTotal').textContent = data.totalDistance;
+                document.getElementById('lastIncome').textContent = data.fareIncome;
+                info.style.display = 'flex';
+
+                const applyBtn = document.getElementById('applyLastOrderBtn');
+                if (applyBtn) {
+                    applyBtn.onclick = function() {
+                        document.getElementById('pickupDistance').value = data.pickupDistance;
+                        document.getElementById('totalDistance').value = data.totalDistance;
+                        document.getElementById('fareIncome').value = data.fareIncome;
+                        // 自动更新高速费
+                        if (!document.getElementById('tollFee').hasAttribute('data-manual')) {
+                            autoCalculateTollFee();
+                        }
+                        calculateProfit();
+                    };
+                }
+            } catch (e) {}
+        }
+
         document.getElementById('calculateBtn').addEventListener('click', function() {
             // 显示加载状态
             const originalText = this.innerHTML;
@@ -505,6 +932,81 @@
         document.getElementById('autoCalcTollBtn').addEventListener('click', function() {
             autoCalculateTollFee();
         });
+
+        // PK 卡片长按一键清空
+        (function() {
+            const quickCard = document.getElementById('quickCard');
+            if (!quickCard) return;
+
+            let longPressTimer = null;
+
+            const startPress = () => {
+                if (longPressTimer) return;
+                longPressTimer = setTimeout(() => {
+                    longPressTimer = null;
+                    if (confirm('是否清空当前 PK 输入（距起点 / 全程 / 收入 / 高速费）？')) {
+                        const ids = ['pickupDistance', 'totalDistance', 'fareIncome', 'tollFee'];
+                        ids.forEach(id => {
+                            const el = document.getElementById(id);
+                            if (el) el.value = '';
+                        });
+                        const tollFeeInput = document.getElementById('tollFee');
+                        if (tollFeeInput) {
+                            tollFeeInput.removeAttribute('data-manual');
+                        }
+                    }
+                }, 700);
+            };
+
+            const cancelPress = () => {
+                if (longPressTimer) {
+                    clearTimeout(longPressTimer);
+                    longPressTimer = null;
+                }
+            };
+
+            quickCard.addEventListener('mousedown', startPress);
+            quickCard.addEventListener('touchstart', startPress);
+            ['mouseup', 'mouseleave', 'touchend', 'touchcancel'].forEach(evt => {
+                quickCard.addEventListener(evt, cancelPress);
+            });
+
+            quickCard.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+            });
+        })();
+
+        // 截图识别按钮
+        const recognizeBtn = document.getElementById('recognizeFromImageBtn');
+        const screenshotInput = document.getElementById('screenshotInput');
+        if (recognizeBtn && screenshotInput) {
+            recognizeBtn.addEventListener('click', function() {
+                screenshotInput.click();
+            });
+            screenshotInput.addEventListener('change', function(e) {
+                const file = e.target.files && e.target.files[0];
+                if (file) {
+                    recognizeFromImage(file);
+                }
+            });
+        }
+
+        // 高级设置折叠/展开
+        const advancedToggle = document.getElementById('advancedToggle');
+        const advancedContent = document.getElementById('advancedContent');
+        const advancedToggleArrow = document.getElementById('advancedToggleArrow');
+        if (advancedToggle && advancedContent && advancedToggleArrow) {
+            advancedToggle.addEventListener('click', function() {
+                const collapsed = advancedContent.classList.contains('advanced-collapsed');
+                if (collapsed) {
+                    advancedContent.classList.remove('advanced-collapsed');
+                    advancedToggleArrow.textContent = '收起';
+                } else {
+                    advancedContent.classList.add('advanced-collapsed');
+                    advancedToggleArrow.textContent = '展开';
+                }
+            });
+        }
         
         // 当总行程距离改变时，自动更新高速费
         document.getElementById('totalDistance').addEventListener('input', function() {
@@ -538,6 +1040,13 @@
             const tollFee = parseFloat(document.getElementById('tollFee').value);
             const fareIncome = parseFloat(document.getElementById('fareIncome').value);
             
+            saveSettings();
+            saveLastOrder(
+                document.getElementById('pickupDistance').value,
+                document.getElementById('totalDistance').value,
+                document.getElementById('fareIncome').value
+            );
+            
             // 计算主行程距离
             const mainTripDistance = totalDistance - pickupDistance;
             
@@ -558,6 +1067,31 @@
             document.getElementById('totalFuelCost').textContent = `¥${totalFuelCost.toFixed(2)}`;
             document.getElementById('tollCost').textContent = `¥${tollFee.toFixed(2)}`;
             document.getElementById('totalCost').textContent = `¥${totalCost.toFixed(2)}`;
+            
+            // 单公里指标
+            const perKmIncomeElement = document.getElementById('perKmIncome');
+            const perKmCostElement = document.getElementById('perKmCost');
+            const perKmProfitElement = document.getElementById('perKmProfit');
+
+            let incomePerKm = null;
+            let costPerKm = null;
+            let profitPerKm = null;
+
+            if (totalDistance > 0 && isFinite(totalDistance)) {
+                incomePerKm = fareIncome / totalDistance;
+                costPerKm = totalCost / totalDistance;
+                profitPerKm = profit / totalDistance;
+
+                perKmIncomeElement.textContent = `¥${incomePerKm.toFixed(2)}/km`;
+                perKmCostElement.textContent = `¥${costPerKm.toFixed(2)}/km`;
+                perKmProfitElement.textContent = `¥${profitPerKm.toFixed(2)}/km`;
+                perKmProfitElement.className = profitPerKm >= 0 ? 'result-value positive' : 'result-value negative';
+            } else {
+                perKmIncomeElement.textContent = '-';
+                perKmCostElement.textContent = '-';
+                perKmProfitElement.textContent = '-';
+                perKmProfitElement.className = 'result-value';
+            }
             
             const profitElement = document.getElementById('profit');
             profitElement.textContent = `¥${profit.toFixed(2)}`;
@@ -605,10 +1139,171 @@
                 
                 scenarioResults.appendChild(scenarioElement);
             });
+
+            // 渲染图表
+            renderCostChart({
+                pickupFuelCost,
+                mainTripFuelCost,
+                tollFee,
+                totalCost,
+                profit
+            });
+
+            renderScenarioChart(scenarios, totalFuelCost, tollFee, fareIncome);
+            renderPerKmChart(incomePerKm, costPerKm, profitPerKm);
+        }
+        
+        function renderCostChart(data) {
+            const container = document.getElementById('costChart');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const items = [
+                { label: '接客油耗', value: data.pickupFuelCost },
+                { label: '主行程油耗', value: data.mainTripFuelCost },
+                { label: '高速费', value: data.tollFee },
+                { label: '总成本', value: data.totalCost },
+                { label: '盈利', value: data.profit }
+            ];
+
+            const max = Math.max(...items.map(item => Math.abs(item.value)), 1);
+
+            items.forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'bar-row';
+
+                const label = document.createElement('div');
+                label.className = 'bar-label';
+                label.textContent = item.label;
+
+                const track = document.createElement('div');
+                track.className = 'bar-track';
+
+                const fill = document.createElement('div');
+                fill.className = 'bar-fill';
+                if (item.label === '盈利' && item.value < 0) {
+                    fill.classList.add('negative');
+                }
+                const widthPercent = (Math.abs(item.value) / max) * 100;
+                fill.style.width = widthPercent + '%';
+
+                track.appendChild(fill);
+
+                const value = document.createElement('div');
+                value.className = 'bar-value';
+                value.textContent = `¥${item.value.toFixed(2)}`;
+
+                row.appendChild(label);
+                row.appendChild(track);
+                row.appendChild(value);
+
+                container.appendChild(row);
+            });
+        }
+
+        function renderPerKmChart(incomePerKm, costPerKm, profitPerKm) {
+            const container = document.getElementById('perKmChart');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (incomePerKm === null || !isFinite(incomePerKm) ||
+                costPerKm === null || !isFinite(costPerKm) ||
+                profitPerKm === null || !isFinite(profitPerKm)) {
+                return;
+            }
+
+            const items = [
+                { label: '单公里收入', value: incomePerKm },
+                { label: '单公里成本', value: costPerKm },
+                { label: '单公里利润', value: profitPerKm }
+            ];
+
+            const max = Math.max(...items.map(item => Math.abs(item.value)), 1);
+
+            items.forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'bar-row';
+
+                const label = document.createElement('div');
+                label.className = 'bar-label';
+                label.textContent = item.label;
+
+                const track = document.createElement('div');
+                track.className = 'bar-track';
+
+                const fill = document.createElement('div');
+                fill.className = 'bar-fill';
+                if (item.label === '单公里利润' && item.value < 0) {
+                    fill.classList.add('negative');
+                }
+                const widthPercent = (Math.abs(item.value) / max) * 100;
+                fill.style.width = widthPercent + '%';
+
+                track.appendChild(fill);
+
+                const value = document.createElement('div');
+                value.className = 'bar-value';
+                value.textContent = `¥${item.value.toFixed(2)}/km`;
+
+                row.appendChild(label);
+                row.appendChild(track);
+                row.appendChild(value);
+
+                container.appendChild(row);
+            });
+        }
+
+        function renderScenarioChart(scenarios, totalFuelCost, tollFee, fareIncome) {
+            const container = document.getElementById('scenarioChart');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const profits = scenarios.map(scenario => {
+                const scenarioCost = totalFuelCost + (tollFee * scenario.tollShare);
+                return fareIncome - scenarioCost;
+            });
+
+            const max = Math.max(...profits.map(p => Math.abs(p)), 1);
+
+            scenarios.forEach((scenario, index) => {
+                const scenarioProfit = profits[index];
+
+                const row = document.createElement('div');
+                row.className = 'bar-row';
+
+                const label = document.createElement('div');
+                label.className = 'bar-label';
+                label.textContent = scenario.name;
+
+                const track = document.createElement('div');
+                track.className = 'bar-track';
+
+                const fill = document.createElement('div');
+                fill.className = 'bar-fill';
+                if (scenarioProfit < 0) {
+                    fill.classList.add('negative');
+                }
+                const widthPercent = (Math.abs(scenarioProfit) / max) * 100;
+                fill.style.width = widthPercent + '%';
+
+                track.appendChild(fill);
+
+                const value = document.createElement('div');
+                value.className = 'bar-value';
+                value.textContent = `¥${scenarioProfit.toFixed(2)}`;
+
+                row.appendChild(label);
+                row.appendChild(track);
+                row.appendChild(value);
+
+                container.appendChild(row);
+            });
         }
         
         // 页面加载时自动计算
         window.addEventListener('load', function() {
+            loadSettings();
+            loadLastOrder();
             // 添加动画延迟
             document.querySelectorAll('.fade-in').forEach((el, index) => {
                 el.style.animationDelay = `${index * 0.1}s`;
