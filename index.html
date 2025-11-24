@@ -379,11 +379,32 @@
             font-weight: 600;
             display: flex;
             align-items: center;
+            justify-content: space-between;
             margin-bottom: 6px;
+        }
+        .quick-input-title span {
+            display: flex;
+            align-items: center;
         }
         .quick-input-title i {
             margin-right: 8px;
             color: var(--primary);
+        }
+        .clear-btn {
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            padding: 4px 6px;
+            border-radius: 4px;
+            transition: var(--transition);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+        }
+        .clear-btn:hover {
+            background: rgba(231, 76, 60, 0.1);
+            color: var(--danger);
         }
         .quick-input-subtitle {
             font-size: 13px;
@@ -570,7 +591,12 @@
         <p class="subtitle">输入您的车辆信息和订单详情，计算订单是否盈利</p>
         
         <div class="card fade-in" id="quickCard">
-            <div class="quick-input-title"><i class="fas fa-bolt"></i> PK 快速输入</div>
+            <div class="quick-input-title">
+                <span><i class="fas fa-bolt"></i> PK 快速输入</span>
+                <button type="button" class="clear-btn" id="clearQuickInputBtn" title="清空当前输入">
+                    <i class="fas fa-eraser"></i>
+                </button>
+            </div>
             <p class="quick-input-subtitle">按 APP 页面顺序依次填写：距起点 → 全程 → 预估收入，如有需要可在下方输入或调整高速费</p>
             <div class="input-group">
                 <label for="pickupDistance"><i class="fas fa-map-marker-alt"></i> 距起点 (km)</label>
@@ -942,46 +968,22 @@
             autoCalculateTollFee();
         });
 
-        // PK 卡片长按一键清空
+        // 清空按钮
         (function() {
-            const quickCard = document.getElementById('quickCard');
-            if (!quickCard) return;
-
-            let longPressTimer = null;
-
-            const startPress = () => {
-                if (longPressTimer) return;
-                longPressTimer = setTimeout(() => {
-                    longPressTimer = null;
-                    if (confirm('是否清空当前 PK 输入（距起点 / 全程 / 收入 / 高速费）？')) {
-                        const ids = ['pickupDistance', 'totalDistance', 'fareIncome', 'tollFee'];
-                        ids.forEach(id => {
-                            const el = document.getElementById(id);
-                            if (el) el.value = '';
-                        });
-                        const tollFeeInput = document.getElementById('tollFee');
-                        if (tollFeeInput) {
-                            tollFeeInput.removeAttribute('data-manual');
-                        }
+            const clearBtn = document.getElementById('clearQuickInputBtn');
+            if (!clearBtn) return;
+            clearBtn.addEventListener('click', function() {
+                if (confirm('是否清空当前 PK 输入（距起点 / 全程 / 收入 / 高速费）？')) {
+                    const ids = ['pickupDistance', 'totalDistance', 'fareIncome', 'tollFee'];
+                    ids.forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.value = '';
+                    });
+                    const tollFeeInput = document.getElementById('tollFee');
+                    if (tollFeeInput) {
+                        tollFeeInput.removeAttribute('data-manual');
                     }
-                }, 700);
-            };
-
-            const cancelPress = () => {
-                if (longPressTimer) {
-                    clearTimeout(longPressTimer);
-                    longPressTimer = null;
                 }
-            };
-
-            quickCard.addEventListener('mousedown', startPress);
-            quickCard.addEventListener('touchstart', startPress);
-            ['mouseup', 'mouseleave', 'touchend', 'touchcancel'].forEach(evt => {
-                quickCard.addEventListener(evt, cancelPress);
-            });
-
-            quickCard.addEventListener('contextmenu', function(e) {
-                e.preventDefault();
             });
         })();
 
